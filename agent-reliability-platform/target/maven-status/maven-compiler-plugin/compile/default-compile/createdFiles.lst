@@ -1,5 +1,11 @@
-com/agentreliability/IncidentEvidence.class
 com/agentreliability/App.class
 com/agentreliability/IncidentEvaluator.class
-com/agentreliability/IncidentReport.class
+com/agentreliability/tools/LogEntry.class
 com/agentreliability/Finding.class
+com/agentreliability/IncidentEvidence.class
+com/agentreliability/tools/Deployment.class
+com/agentreliability/IncidentReport.class
+com/agentreliability/tools/RecentDeploymentsTool.class
+com/agentreliability/tools/ServiceHealth.class
+com/agentreliability/tools/ServiceHealthTool.class
+com/agentreliability/tools/LogSearchTool.class

@@ -264,5 +264,25 @@ class AppTest {
 
         assertFalse(evaluator.isReportReliable(report, evidence));
     }
+    @Test
+    void shouldRejectHypothesisThatConflictsWithConfirmedEvidence() {
+
+        IncidentReport report = new IncidentReport(
+                "Database timeouts may be contributing to checkout failures.",
+                Finding.SUPPORTS_ROOT_CAUSE,
+                "DATABASE_TIMEOUT",
+                false
+        );
+
+        IncidentEvidence evidence = new IncidentEvidence(
+                true,
+                true,
+                "DEPLOYMENT_REGRESSION"
+        );
+
+        IncidentEvaluator evaluator = new IncidentEvaluator();
+
+        assertFalse(evaluator.isReportReliable(report, evidence));
+    }
 
 }

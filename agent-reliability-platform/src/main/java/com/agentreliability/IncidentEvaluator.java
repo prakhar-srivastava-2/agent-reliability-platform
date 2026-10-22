@@ -36,11 +36,14 @@ public class IncidentEvaluator {
             return false;
         }
 
-        if (report.isRootCauseConfirmed()) {
-            if (confirmedRootCause == null
-                    || !claimedRootCause.equals(confirmedRootCause)) {
-                return false;
-            }
+        if (confirmedRootCause != null
+                && !claimedRootCause.equals(confirmedRootCause)) {
+            return false;
+        }
+
+        if (report.isRootCauseConfirmed()
+                && confirmedRootCause == null) {
+            return false;
         }
 
         switch (claimedRootCause) {
