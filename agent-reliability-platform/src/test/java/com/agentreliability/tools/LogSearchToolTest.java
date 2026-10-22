@@ -1,4 +1,3 @@
-
 package com.agentreliability.tools;
 
 import java.time.LocalDateTime;
@@ -9,6 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 class LogSearchToolTest {
+
+    private final LocalDateTime referenceTime =
+            LocalDateTime.parse("2026-10-21T20:00:00");
 
     @Test
     void shouldReturnOnlyLogsForRequestedService() {
@@ -29,8 +31,9 @@ class LogSearchToolTest {
 
         LogSearchTool tool = new LogSearchTool(logs);
 
-        List<LogEntry> results =
-                tool.searchLogs("checkout", "24h");
+        List<LogEntry> results = tool.searchLogs(
+                "checkout", "24h", referenceTime
+        );
 
         assertEquals(1, results.size());
         assertEquals("Checkout failed", results.get(0).getMessage());
@@ -49,8 +52,9 @@ class LogSearchToolTest {
 
         LogSearchTool tool = new LogSearchTool(logs);
 
-        List<LogEntry> results =
-                tool.searchLogs("CHECKOUT", "24h");
+        List<LogEntry> results = tool.searchLogs(
+                "CHECKOUT", "24h", referenceTime
+        );
 
         assertEquals(1, results.size());
     }
@@ -68,8 +72,9 @@ class LogSearchToolTest {
 
         LogSearchTool tool = new LogSearchTool(logs);
 
-        List<LogEntry> results =
-                tool.searchLogs("checkout", "24h");
+        List<LogEntry> results = tool.searchLogs(
+                "checkout", "24h", referenceTime
+        );
 
         assertEquals(0, results.size());
     }
@@ -113,9 +118,6 @@ class LogSearchToolTest {
 
         LogSearchTool tool = new LogSearchTool(logs);
 
-        LocalDateTime referenceTime =
-                LocalDateTime.parse("2026-10-21T20:00:00");
-
         List<LogEntry> results = tool.searchLogs(
                 "checkout",
                 "1h",
@@ -135,7 +137,7 @@ class LogSearchToolTest {
                 () -> tool.searchLogs(
                         "checkout",
                         "3h",
-                        LocalDateTime.parse("2026-10-21T20:00:00")
+                        referenceTime
                 )
         );
     }
@@ -152,9 +154,6 @@ class LogSearchToolTest {
         );
 
         LogSearchTool tool = new LogSearchTool(logs);
-
-        LocalDateTime referenceTime =
-                LocalDateTime.parse("2026-10-21T20:00:00");
 
         List<LogEntry> results = tool.searchLogs(
                 "checkout",
@@ -185,9 +184,6 @@ class LogSearchToolTest {
 
         LogSearchTool tool = new LogSearchTool(logs);
 
-        LocalDateTime referenceTime =
-                LocalDateTime.parse("2026-10-21T20:00:00");
-
         List<LogEntry> results = tool.searchLogs(
                 "checkout",
                 "1h",
@@ -197,6 +193,4 @@ class LogSearchToolTest {
         assertEquals(1, results.size());
         assertEquals("Recent error", results.get(0).getMessage());
     }
-
-
 }
