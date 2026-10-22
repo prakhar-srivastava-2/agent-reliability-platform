@@ -1,6 +1,8 @@
 com/agentreliability/App.class
+com/agentreliability/tools/DiagnosticTool.class
 com/agentreliability/tools/IncidentMetricsTool.class
 com/agentreliability/Finding.class
+com/agentreliability/tools/ToolRegistry.class
 com/agentreliability/IncidentEvidence.class
 com/agentreliability/tools/Deployment.class
 com/agentreliability/tools/ServiceHealth.class

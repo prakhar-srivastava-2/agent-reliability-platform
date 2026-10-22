@@ -5,12 +5,27 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class RecentDeploymentsTool {
+public class RecentDeploymentsTool implements DiagnosticTool {
 
     private final List<Deployment> deployments;
 
     public RecentDeploymentsTool(List<Deployment> deployments) {
         this.deployments = List.copyOf(deployments);
+    }
+
+    @Override
+    public String getName(){
+        return "get_recent_deployments";
+    }
+
+    @Override
+    public String getDescription(){
+        return "Returns the list of deployment for the requested service for a given timeframe";
+    }
+
+    @Override
+    public Object execute(String serviceName,String timeWindow){
+        return getRecentDeployments(serviceName, timeWindow);
     }
     public List<Deployment> getRecentDeployments(String serviceName,String timeWindow){
         return getRecentDeployments(serviceName, timeWindow, LocalDateTime.now());

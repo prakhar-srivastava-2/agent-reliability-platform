@@ -1,5 +1,7 @@
 /Users/prakharsrivastava/Documents/framewrok/agent-reliability-platform/agent-reliability-platform/src/test/java/com/agentreliability/AppTest.java
+/Users/prakharsrivastava/Documents/framewrok/agent-reliability-platform/agent-reliability-platform/src/test/java/com/agentreliability/tools/DiagnosticToolTest.java
 /Users/prakharsrivastava/Documents/framewrok/agent-reliability-platform/agent-reliability-platform/src/test/java/com/agentreliability/tools/IncidentMetricsToolTest.java
 /Users/prakharsrivastava/Documents/framewrok/agent-reliability-platform/agent-reliability-platform/src/test/java/com/agentreliability/tools/LogSearchToolTest.java
 /Users/prakharsrivastava/Documents/framewrok/agent-reliability-platform/agent-reliability-platform/src/test/java/com/agentreliability/tools/RecentDeploymentsToolTest.java
 /Users/prakharsrivastava/Documents/framewrok/agent-reliability-platform/agent-reliability-platform/src/test/java/com/agentreliability/tools/ServiceHealthToolTest.java
+/Users/prakharsrivastava/Documents/framewrok/agent-reliability-platform/agent-reliability-platform/src/test/java/com/agentreliability/tools/ToolRegistryTest.java

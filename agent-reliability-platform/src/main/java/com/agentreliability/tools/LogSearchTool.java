@@ -5,13 +5,29 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class LogSearchTool {
+public class LogSearchTool implements DiagnosticTool{
 
     private final List<LogEntry> logs;
 
     public LogSearchTool(List<LogEntry> logs) {
-        this.logs = List.copyOf(logs);
+    this.logs = List.copyOf(logs);
     }
+
+    @Override
+    public String getName(){
+        return "search_logs";
+    }
+
+    @Override
+    public String getDescription(){
+        return "Searches logs for a service within a specified time window.";
+    }
+
+    @Override
+    public Object execute(String serviceName, String timeWindow){
+        return searchLogs(serviceName, timeWindow);
+    }
+
 
     // Normal application method: uses the actual current time
     public List<LogEntry> searchLogs(
