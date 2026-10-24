@@ -15,10 +15,18 @@ public class IncidentEvaluator {
         Finding finding = report.getFinding();
         String claimedRootCause = report.getClaimedRootCause();
         String confirmedRootCause = evidence.getConfirmedRootCause();
+        if(claimedRootCause!=null){
+            claimedRootCause = claimedRootCause.trim();
+        }
+
+        if(confirmedRootCause!=null){
+            confirmedRootCause = confirmedRootCause.trim();
+        }
 
         if (conclusion == null || conclusion.isBlank()) {
             return false;
         }
+
 
         if (finding == null) {
             return false;
@@ -32,7 +40,7 @@ public class IncidentEvaluator {
             return false;
         }
 
-        if (claimedRootCause == null) {
+        if (claimedRootCause == null || claimedRootCause.isBlank()) {
             return false;
         }
 
@@ -43,6 +51,10 @@ public class IncidentEvaluator {
 
         if (report.isRootCauseConfirmed()
                 && confirmedRootCause == null) {
+            return false;
+        }
+
+        if(!report.isRootCauseConfirmed() && confirmedRootCause!=null){
             return false;
         }
 
