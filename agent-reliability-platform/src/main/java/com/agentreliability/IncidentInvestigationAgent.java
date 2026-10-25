@@ -12,11 +12,20 @@ import com.agentreliability.tools.ToolRegistry;
 public class IncidentInvestigationAgent {
 
     private final ToolRegistry toolRegistry;
+    private final LlmClient llmClient;
 
     public IncidentInvestigationAgent(ToolRegistry toolRegistry) {
         this.toolRegistry = toolRegistry;
+        this.llmClient = null;
     }
 
+     public IncidentInvestigationAgent(
+        ToolRegistry toolRegistry,
+        LlmClient llmClient) {
+        this.toolRegistry = toolRegistry;
+        this.llmClient = llmClient;
+     }
+    private final IncidentReportParser reportParser = new IncidentReportParser();
 
     public IncidentReport investigate(IncidentRequest request) {
 
@@ -80,6 +89,75 @@ public class IncidentInvestigationAgent {
             conclusion += ". Elevated error rate detected: "
                     + metrics.getErrorRate();
         }
+        // String prompt = """
+        //         Investigate the following service incident.
+
+        //         Service name: %s
+        //         Service health status: %s
+        //         Incident metrics: %s
+        //         Logs: %s
+        //         Recent deployments: %s
+
+        //         Based on this evidence, explain the likely cause of the incident.
+        //         Clearly distinguish confirmed facts from hypotheses.
+        //         Do not claim a root cause is confirmed unless the evidence proves it.
+        //         """.formatted(
+        //         request.getServiceName(),
+        //         health.getStatus(),
+        //         metrics,
+        //         logs,
+        //         deployments
+        // );
+
+        String metricsText = metrics == null
+        ? "No metrics available"
+        : "Request volume: " + metrics.getRequestVolume()
+                + ", Error rate: " + metrics.getErrorRate()
+                + ", Average latency: "
+                + metrics.getAverageLatencyMs() + " ms";
+
+        String logsText = logs == null || logs.isEmpty()
+                ? "No logs available"
+                : logs.stream()
+                        .map(log -> "Time: " + log.getTimestamp()
+                                + ", Level: " + log.getLevel()
+                                + ", Message: " + log.getMessage())
+                        .collect(java.util.stream.Collectors.joining("\n"));
+
+        String deploymentsText = deployments == null || deployments.isEmpty()
+                ? "No recent deployments available"
+                : deployments.stream()
+                        .map(deployment -> "Version: " + deployment.getVersion()
+                                + ", Time: " + deployment.getTimestamp())
+                        .collect(java.util.stream.Collectors.joining("\n"));
+
+        String prompt = """
+                Investigate the following service incident.
+
+                Service name: %s
+                Service health status: %s
+                Incident metrics: %s
+                Logs:
+                %s
+                Recent deployments:
+                %s
+
+                Based on this evidence, explain the likely cause of the incident.
+                Clearly distinguish confirmed facts from hypotheses.
+                Do not claim a root cause is confirmed unless the evidence proves it.
+                """.formatted(
+                request.getServiceName(),
+                health.getStatus(),
+                metricsText,
+                logsText,
+                deploymentsText
+        );
+
+
+        if (llmClient != null) {
+        String llmResponse = llmClient.generateText(prompt);
+        return reportParser.parse(llmResponse);
+        }
 
         return new IncidentReport(
                 conclusion,
@@ -88,7 +166,5 @@ public class IncidentInvestigationAgent {
                 false
         );
     }
-
-
 
 }

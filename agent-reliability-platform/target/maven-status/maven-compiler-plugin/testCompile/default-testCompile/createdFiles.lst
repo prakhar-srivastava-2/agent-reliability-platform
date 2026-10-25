@@ -5,4 +5,5 @@ com/agentreliability/tools/ServiceHealthToolTest.class
 com/agentreliability/tools/IncidentMetricsToolTest.class
 com/agentreliability/tools/DiagnosticToolTest.class
 com/agentreliability/tools/LogSearchToolTest.class
+com/agentreliability/IncidentReportParserTest.class
 com/agentreliability/tools/ToolRegistryTest.class

@@ -300,4 +300,104 @@ class IncidentInvestigationAgentTest {
         );
     }
 
+        @Test
+        void shouldUseFakeLlmResponseAsReportConclusion() {
+        ServiceHealthTool healthTool = new ServiceHealthTool(
+                Map.of(
+                        "checkout",
+                        new ServiceHealth("checkout", "DEGRADED", 0.15)
+                )
+        );
+
+        IncidentMetricsTool metricsTool = new IncidentMetricsTool(
+                Map.of(
+                        "checkout",
+                        new IncidentMetrics(1000, 0.15, 500)
+                )
+        );
+
+        LogSearchTool logTool = new LogSearchTool(List.of());
+        RecentDeploymentsTool deploymentTool =
+                new RecentDeploymentsTool(List.of());
+
+        ToolRegistry registry = new ToolRegistry(
+                List.of(healthTool, metricsTool, logTool, deploymentTool)
+        );
+
+        String expectedResponse = """
+                {
+                "conclusion": "Database timeouts may be causing elevated errors.",
+                "finding": "SUPPORTS_ROOT_CAUSE",
+                "claimedRootCause": "DATABASE_TIMEOUT",
+                "rootCauseConfirmed": false
+                }
+                """;
+
+        FakeLlmClient fakeLlmClient = new FakeLlmClient(expectedResponse);
+
+        IncidentInvestigationAgent agent =
+                new IncidentInvestigationAgent(registry, fakeLlmClient);
+
+        IncidentRequest request = new IncidentRequest("checkout", "1h");
+        IncidentReport report = agent.investigate(request);
+
+        assertEquals(
+                "Database timeouts may be causing elevated errors.",
+                report.getConclusion()
+        );
+        assertEquals(Finding.SUPPORTS_ROOT_CAUSE, report.getFinding());
+        assertEquals("DATABASE_TIMEOUT", report.getClaimedRootCause());
+        assertFalse(report.isRootCauseConfirmed());
+        }
+
+
+        @Test
+        void shouldIncludeDiagnosticEvidenceInLlmPrompt() {
+        ServiceHealthTool healthTool = new ServiceHealthTool(
+                Map.of(
+                        "checkout",
+                        new ServiceHealth("checkout", "DEGRADED", 0.15)
+                )
+        );
+
+        IncidentMetricsTool metricsTool = new IncidentMetricsTool(
+                Map.of(
+                        "checkout",
+                        new IncidentMetrics(1000, 0.15, 500)
+                )
+        );
+
+        LogSearchTool logTool = new LogSearchTool(List.of());
+
+        RecentDeploymentsTool deploymentTool =
+                new RecentDeploymentsTool(List.of());
+
+        ToolRegistry registry = new ToolRegistry(
+                List.of(healthTool, metricsTool, logTool, deploymentTool)
+        );
+
+        FakeLlmClient fakeLlmClient = new FakeLlmClient("""
+        {
+          "conclusion": "Investigation completed.",
+          "finding": "SUPPORTS_ROOT_CAUSE",
+          "claimedRootCause": "DATABASE_TIMEOUT",
+          "rootCauseConfirmed": false
+        }
+        """);
+
+        IncidentInvestigationAgent agent =
+                new IncidentInvestigationAgent(registry, fakeLlmClient);
+
+        agent.investigate(new IncidentRequest("checkout", "1h"));
+
+        String prompt = fakeLlmClient.getLastPrompt();
+        System.out.println("LLM PROMPT:\n" + prompt);
+        assertNotNull(prompt);
+        assertTrue(prompt.contains("DEGRADED"));
+        assertTrue(prompt.contains("checkout"));
+        assertTrue(prompt.contains("Recent deployments"));
+        assertTrue(prompt.contains("Incident metrics"));
+        assertTrue(prompt.contains("Logs"));
+        }
+
 }
